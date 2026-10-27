@@ -56,6 +56,9 @@ const THEMES = {
     accent: "#f5c518",
     match: "#3fb950",
     matchBg: "rgba(63,185,80,0.18)",
+    faint: "#3d444d",
+    skirt: "#0d1117",
+    pressInk: "#1f1600",
     art: "monkey-night.png",
   },
   light: {
@@ -64,14 +67,19 @@ const THEMES = {
     panel: "#f6f8fa",
     border: "#d0d7de",
     key: "#ffffff",
-    accent: "#b98900",
+    accent: "#9a6700",
     match: "#1a7f37",
     matchBg: "rgba(26,127,55,0.14)",
+    faint: "#c8d1da",
+    skirt: "#d0d7de",
+    pressInk: "#ffffff",
     art: "monkey-day.png",
   },
 };
 
-const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
+const MONO = "'Plex Mono', ui-monospace, Menlo, Consolas, monospace";
+const PIXEL = "Silkscreen, 'Plex Mono', monospace";
+const FELL = "Fell, Georgia, 'Times New Roman', serif";
 const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif";
 
 // ---------- Hamlet ----------
@@ -220,8 +228,26 @@ async function refreshStars(state) {
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const fmt = (n) => n.toLocaleString("en-US");
-const svg = (w, h, body) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">\n${body}\n</svg>\n`;
+const svg = (w, h, body, fonts = []) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">\n${fontFaces(fonts)}${body}\n</svg>\n`;
+
+// Subsets of OFL fonts, embedded so every viewer sees the same type.
+const FONTS = {
+  pixel: { family: "Silkscreen", file: "silkscreen.woff2" },
+  mono: { family: "Plex Mono", file: "plex-mono-regular.woff2", weight: 400 },
+  monoBold: { family: "Plex Mono", file: "plex-mono-semibold.woff2", weight: 600 },
+  fell: { family: "Fell", file: "fell-italic.woff2", style: "italic" },
+};
+const fontCache = {};
+function fontFaces(keys) {
+  if (!keys.length) return "";
+  const rules = keys.map((k) => {
+    const f = FONTS[k];
+    fontCache[k] ??= readFileSync(`${root}assets/fonts/${f.file}`).toString("base64");
+    return `@font-face{font-family:"${f.family}";src:url(data:font/woff2;base64,${fontCache[k]}) format("woff2");font-weight:${f.weight ?? 400};font-style:${f.style ?? "normal"}}`;
+  });
+  return `<style>${rules.join("")}</style>\n`;
+}
 
 // log10 of the years until the monkey types all of Hamlet at the daily pace.
 function hamletExponent() {
@@ -239,6 +265,30 @@ function wrap(text, width) {
   return lines;
 }
 
+// Pixel grids: each character is a palette key, "." is empty.
+function pixels(grid, palette, cell, x0 = 0, y0 = 0) {
+  return grid
+    .flatMap((row, y) =>
+      [...row].map((c, x) =>
+        palette[c] ? `<rect x="${x0 + x * cell}" y="${y0 + y * cell}" width="${cell}" height="${cell}" fill="${palette[c]}"/>` : "",
+      ),
+    )
+    .join("");
+}
+
+const BANANA = ["......ss", ".....ss.", "....yyy.", "...yyyy.", ".yyyyy..", "yyyyy...", ".yyy...."];
+
+// Deterministic per snippet, so re-rendering doesn't change the rhythm.
+function rng(seed) {
+  let h = 2166136261;
+  for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return () => {
+    h = Math.imul(h ^ (h >>> 15), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+}
+
 const KEY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
 function banner(state, t) {
@@ -251,74 +301,75 @@ function banner(state, t) {
   const pw = W - px;
   const ix = px + 22;
 
-  // Typing timeline, shared by the text, the cursor and the keyboard.
-  const STEP = 0.14;
-  const typingEnd = snippet.length * STEP;
-  const D = typingEnd + 4;
+  // A monkey doesn't type at a steady pace: uneven gaps, the odd distracted pause.
+  const random = rng(snippet);
+  const at = [0];
+  for (let i = 1; i <= snippet.length; i++) {
+    at.push(at[i - 1] + 0.06 + random() * 0.15 + (random() < 0.1 ? 0.45 : 0));
+  }
+  const typingEnd = at[snippet.length];
+  const D = +(typingEnd + 4).toFixed(2);
   const kt = (s) => (s / D).toFixed(4);
-  const cw = 11.6;
-  const ty = 186;
+  const loop = `dur="${D}s" calcMode="discrete" repeatCount="indefinite"`;
+  const cw = 10.8;
+  const ty = 176;
 
   const chars = [...snippet]
     .map((c, i) => {
       const inMatch = i >= matchStart && i < matchStart + match.length;
-      const show = `<animate attributeName="opacity" values="0;1;1" keyTimes="0;${kt(i * STEP)};1" dur="${D}s" calcMode="discrete" repeatCount="indefinite"/>`;
-      const glyph = c === " " ? "·" : c;
-      return `<text x="${(ix + i * cw).toFixed(1)}" y="${ty}" fill="${inMatch ? t.match : c === " " ? t.border : t.fg}" font-weight="${inMatch ? 700 : 400}" opacity="0">${esc(glyph)}${show}</text>`;
+      const fill = inMatch ? t.match : c === " " ? t.faint : t.fg;
+      return `<text x="${(ix + i * cw).toFixed(1)}" y="${ty}" fill="${fill}"${inMatch ? ' font-weight="600"' : ""} opacity="0">${c === " " ? "·" : esc(c)}<animate attributeName="opacity" values="0;1;1" keyTimes="0;${kt(at[i])};1" ${loop}/></text>`;
     })
     .join("\n");
 
-  const reveal = (extra = "") =>
-    `opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;${kt(typingEnd)};1" dur="${D}s" calcMode="discrete" repeatCount="indefinite"/>${extra}`;
+  const afterTyping = `opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;${kt(typingEnd)};1" ${loop}/>`;
+  let highlight = "";
+  if (match.length) {
+    const mx = ix + matchStart * cw - 3;
+    const mw = match.length * cw + 6;
+    const cx = mx + mw / 2;
+    highlight = `<rect x="${mx.toFixed(1)}" y="${ty - 17}" width="${mw.toFixed(1)}" height="24" rx="3" fill="${t.matchBg}" ${afterTyping}</rect>
+<g ${afterTyping}
+  <path d="M${cx.toFixed(1)} ${ty + 12}v12M${(cx - 4).toFixed(1)} ${ty + 16}l4 -4l4 4" fill="none" stroke="${t.match}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="${cx.toFixed(1)}" y="${ty + 42}" text-anchor="middle" font-family="${FELL}" font-style="italic" font-size="18" fill="${t.match}">that’s Hamlet.</text>
+</g>`;
+  }
 
-  const matchX = ix + matchStart * cw - 3;
-  const matchW = match.length * cw + 6;
-  const highlight = match.length
-    ? `<rect x="${matchX.toFixed(1)}" y="${ty - 19}" width="${matchW.toFixed(1)}" height="26" rx="4" fill="${t.matchBg}" ${reveal()}</rect>
-<text x="${(matchX + matchW / 2).toFixed(1)}" y="${ty + 26}" text-anchor="middle" font-family="${SANS}" font-size="13" font-weight="600" fill="${t.match}" ${reveal()}↑ that's Hamlet!</text>`
-    : "";
-
-  const cursorXs = [...snippet, ""].map((_, i) => (ix + i * cw).toFixed(1));
-  const cursorTimes = cursorXs.map((_, i) => kt(i * STEP));
-  const cursor = `<rect x="${ix}" y="${ty - 17}" width="2.5" height="22" fill="${t.accent}">
-<animate attributeName="x" values="${cursorXs.join(";")}" keyTimes="${cursorTimes.join(";")}" dur="${D}s" calcMode="discrete" repeatCount="indefinite"/>
-<animate attributeName="opacity" values="1;0;1" dur="1s" calcMode="discrete" repeatCount="indefinite"/>
+  const cursorXs = at.map((_, i) => (ix + i * cw).toFixed(1));
+  const cursor = `<rect x="${ix}" y="${ty - 15}" width="2" height="20" fill="${t.accent}">
+<animate attributeName="x" values="${cursorXs.join(";")}" keyTimes="${at.map(kt).join(";")}" ${loop}/>
+<animate attributeName="opacity" values="1;0;1" dur="1.05s" calcMode="discrete" repeatCount="indefinite"/>
 </rect>`;
 
-  // Light up each key at the moment its letter is typed.
+  // Keycaps sink and light up at the moment their letter is typed.
   const pressTimes = {};
-  [...snippet].forEach((c, i) => (pressTimes[c] ??= []).push(i * STEP));
-  const keyAnim = (c) => {
+  [...snippet].forEach((c, i) => (pressTimes[c] ??= []).push(at[i]));
+  const pressAnims = (c) => {
     const times = pressTimes[c];
-    if (!times) return "";
+    if (!times) return { cap: "", label: "", move: "" };
     const keyTimes = ["0"];
-    const values = [t.key];
-    for (const s of times) {
-      keyTimes.push(kt(s), kt(s + STEP * 0.8));
-      values.push(t.accent, t.key);
-    }
+    for (const s of times) keyTimes.push(kt(s), kt(s + 0.09));
     keyTimes.push("1");
-    values.push(t.key);
-    return `<animate attributeName="fill" values="${values.join(";")}" keyTimes="${keyTimes.join(";")}" dur="${D}s" calcMode="discrete" repeatCount="indefinite"/>`;
+    const seq = (up, down) => [up, ...times.flatMap(() => [down, up]), up].join(";");
+    const k = `keyTimes="${keyTimes.join(";")}" ${loop}`;
+    return {
+      cap: `<animate attributeName="fill" values="${seq(t.key, t.accent)}" ${k}/>`,
+      label: `<animate attributeName="fill" values="${seq(t.dim, t.pressInk)}" ${k}/>`,
+      move: `<animateTransform attributeName="transform" type="translate" values="${seq("0 0", "0 2")}" ${k}/>`,
+    };
+  };
+  const keycap = (x, y, w, label, c) => {
+    const a = pressAnims(c);
+    return `<rect x="${x}" y="${y + 3}" width="${w}" height="22" rx="4" fill="${t.skirt}"/>
+<g><rect x="${x}" y="${y}" width="${w}" height="22" rx="4" fill="${t.key}" stroke="${t.border}" stroke-width="0.75">${a.cap}</rect>${label ? `<text x="${x + w / 2}" y="${y + 15}" text-anchor="middle" font-size="11" fill="${t.dim}">${label}${a.label}</text>` : ""}${a.move}</g>`;
   };
   const KW = 30;
-  const KH = 22;
-  const GAP = 4;
-  const ky = 232;
+  const ky = 236;
   const keys = KEY_ROWS.flatMap((row, r) =>
-    [...row].map((c, k) => {
-      const x = ix + r * 10 + k * (KW + GAP);
-      const y = ky + r * (KH + GAP);
-      return `<rect x="${x}" y="${y}" width="${KW}" height="${KH}" rx="4" fill="${t.key}" stroke="${t.border}">${keyAnim(c)}</rect>
-<text x="${x + KW / 2}" y="${y + 15}" text-anchor="middle" font-size="11" fill="${t.dim}">${c}</text>`;
-    }),
+    [...row].map((c, k) => keycap(ix + r * 10 + k * (KW + 4), ky + r * 28, KW, c, c)),
   );
-  const spaceY = ky + 3 * (KH + GAP);
-  keys.push(
-    `<rect x="${ix + 70}" y="${spaceY}" width="${6 * KW}" height="${KH}" rx="4" fill="${t.key}" stroke="${t.border}">${keyAnim(" ")}</rect>`,
-  );
+  keys.push(keycap(ix + 74, ky + 84, 6 * KW, "", " "));
 
-  const day = dayNumber(state);
   return svg(
     W,
     H,
@@ -330,103 +381,130 @@ function banner(state, t) {
 <rect x="${px + 0.5}" y="0.5" width="${pw - 1}" height="${H - 1}" rx="16" fill="${t.panel}" stroke="${t.border}"/>
 <g font-family="${MONO}">
   <circle cx="${ix + 5}" cy="28" r="5" fill="#ff5f57"/><circle cx="${ix + 21}" cy="28" r="5" fill="#febc2e"/><circle cx="${ix + 37}" cy="28" r="5" fill="#28c840"/>
-  <text x="${px + pw - 22}" y="32" text-anchor="end" font-size="12" fill="${t.dim}">monkey.typewriter · day ${day}</text>
-  <text x="${ix}" y="94" font-size="23" font-weight="800" fill="${t.fg}">I AM A CODING MACHINE</text>
-  <text x="${ix}" y="148" font-size="13" fill="${t.accent}">$ monkey --type ${state.latest.fedBy ? `--banana=@${esc(state.latest.fedBy)}` : "--keys=10M"}</text>
-  <g font-size="19">${chars}</g>
+  <text x="${px + pw - 22}" y="32" text-anchor="end" font-size="12" fill="${t.dim}">day ${dayNumber(state)}</text>
+  <text x="${ix}" y="92" font-family="${PIXEL}" font-size="23" fill="${t.fg}">I AM A CODING MACHINE</text>
+  <text x="${ix}" y="130" font-size="13" fill="${t.accent}">$ monkey --type ${state.latest.fedBy ? `--banana=@${esc(state.latest.fedBy)}` : "--keys=10M"}</text>
+  <g font-size="18">${chars}</g>
   ${highlight}
   ${cursor}
   ${keys.join("\n")}
 </g>`,
+    ["pixel", "mono", "monoBold", "fell"],
   );
 }
 
 function stats(state, t) {
   const W = 1200;
-  const H = 316;
-  const tileW = (W - 3 * 16) / 4;
-  const exponent = hamletExponent();
-  const tile = (i, label, value, unit = "", sup = "") => {
-    const x = i * (tileW + 16);
-    return `<rect x="${x + 0.5}" y="0.5" width="${tileW - 1}" height="111" rx="14" fill="${t.panel}" stroke="${t.border}"/>
-<text x="${x + 22}" y="34" font-family="${MONO}" font-size="12" letter-spacing="1.5" fill="${t.dim}">${label}</text>
-<text x="${x + 22}" y="84" font-family="${MONO}" font-size="30" font-weight="800" fill="${t.fg}">${value}${sup ? `<tspan font-size="17" dy="-14">${sup}</tspan>` : ""}${unit ? `<tspan font-size="14" font-weight="400" fill="${t.dim}" dy="${sup ? 14 : 0}"> ${unit}</tspan>` : ""}</text>`;
-  };
-
+  const H = 300;
   const best = state.best;
   const where = locate(best.match);
+
   // Trim long lines around the match so the quote fits.
   let { line } = where;
   let [ms, me] = where.matchInLine;
-  const MAX = 78;
+  const MAX = 84;
   if (line.length > MAX) {
-    const from = Math.max(0, Math.min(ms - 24, line.length - MAX));
+    const from = Math.max(0, Math.min(ms - 28, line.length - MAX));
     line = (from > 0 ? "…" : "") + line.slice(from, from + MAX) + (from + MAX < line.length ? "…" : "");
     const shift = from > 0 ? from - 1 : 0;
     ms -= shift;
     me -= shift;
   }
-  const credit = best.fedBy ? ` thanks to @${esc(best.fedBy)}'s banana 🍌` : "";
+
+  const quoted = `“${best.match}”`;
+  const credit = best.fedBy ? `, thanks to @${esc(best.fedBy)}’s banana` : "";
+  const sep = `<tspan fill="${t.faint}">   /   </tspan>`;
+  const value = (v) => `<tspan font-family="${MONO}" font-weight="600" fill="${t.fg}">${v}</tspan>`;
 
   return svg(
     W,
     H,
-    `${tile(0, "DAY", fmt(dayNumber(state)))}
-${tile(1, "KEYSTROKES", fmt(state.keystrokes))}
-${tile(2, "BANANAS EATEN", fmt(state.bananas))}
-${tile(3, "HAMLET ETA", "10", "years", fmt(exponent))}
-<rect x="0.5" y="128.5" width="${W - 1}" height="${H - 129}" rx="14" fill="${t.panel}" stroke="${t.border}"/>
-<text x="26" y="166" font-family="${MONO}" font-size="12" letter-spacing="1.5" fill="${t.dim}">LONGEST SHAKESPEARE SO FAR · ${best.match.length} CHARACTERS</text>
-<text x="26" y="222" font-family="${MONO}" font-size="40" font-weight="800" fill="${t.match}" xml:space="preserve">“${esc(best.match)}”</text>
-<text x="26" y="262" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" fill="${t.fg}" xml:space="preserve">${esc(line.slice(0, ms))}<tspan fill="${t.match}" font-weight="700" text-decoration="underline">${esc(line.slice(ms, me))}</tspan>${esc(line.slice(me))}</text>
-<text x="26" y="290" font-family="${SANS}" font-size="14" fill="${t.dim}">Hamlet, Act ${where.act}, Scene ${where.scene} · typed by accident on day ${best.day}${credit}</text>`,
+    `<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="16" fill="${t.panel}" stroke="${t.border}"/>
+<text x="40" y="90" font-family="${MONO}" font-weight="600" font-size="46" fill="${t.match}" xml:space="preserve">${esc(quoted)}</text>
+<text x="${40 + quoted.length * 27.6 + 20}" y="88" font-family="${SANS}" font-size="16" fill="${t.dim}">${best.match.length} characters of Hamlet, typed by accident on day ${best.day}${credit}</text>
+<text x="40" y="156" font-family="${FELL}" font-style="italic" font-size="30" fill="${t.fg}" xml:space="preserve">${esc(line.slice(0, ms))}<tspan fill="${t.match}" text-decoration="underline">${esc(line.slice(ms, me))}</tspan>${esc(line.slice(me))}</text>
+<text x="40" y="192" font-family="${FELL}" font-style="italic" font-size="18" fill="${t.dim}">— Hamlet, Act ${where.act}, Scene ${where.scene}</text>
+<line x1="40" x2="${W - 40}" y1="226.5" y2="226.5" stroke="${t.border}"/>
+<text x="40" y="266" font-family="${SANS}" font-size="17" fill="${t.dim}" xml:space="preserve">Day ${value(fmt(dayNumber(state)))}${sep}${value(fmt(state.keystrokes))} keystrokes${sep}${value(fmt(state.bananas))} banana${state.bananas === 1 ? "" : "s"} eaten${sep}Hamlet done in ${value("10")}<tspan font-family="${MONO}" font-weight="600" font-size="12" dy="-9" fill="${t.fg}">${fmt(hamletExponent())}</tspan><tspan dy="9"> years</tspan></text>`,
+    ["mono", "monoBold", "fell"],
   );
 }
 
+const PROJECT_ICONS = {
+  penciled: ["......##", ".....#.#", "....#.#.", "...#.#..", "..#.#...", ".##.#...", "#.##....", "##......"],
+  localhost: ["########", "#......#", "#.#....#", "#..#...#", "#.#..###", "#......#", "########"],
+  "better-auth-localization": [".######.", "#......#", "#.#..#.#", "#......#", ".####..#", "....#.#.", ".....#.."],
+};
+
 function card(project, state, t) {
   const W = 400;
-  const H = 220;
+  const H = 240;
   const stars = state.stars[project.repo];
-  const n = PROJECTS.indexOf(project) + 1;
   const lines = wrap(project.description, 44)
     .slice(0, 3)
-    .map((l, i) => `<text x="24" y="${102 + i * 22}" font-family="${SANS}" font-size="15" fill="${t.dim}">${esc(l)}</text>`)
+    .map((l, i) => `<text x="24" y="${124 + i * 22}" font-family="${SANS}" font-size="15" fill="${t.dim}">${esc(l)}</text>`)
     .join("\n");
   return svg(
     W,
     H,
     `<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="14" fill="${t.panel}" stroke="${t.border}"/>
-<text x="24" y="36" font-family="${MONO}" font-size="11" letter-spacing="1.5" fill="${t.accent}">MONKEY OUTPUT #${String(n).padStart(2, "0")} · IT WORKS</text>
-<text x="24" y="70" font-family="${MONO}" font-size="${project.title.length > 18 ? 19 : 24}" font-weight="800" fill="${t.fg}">${esc(project.title)}</text>
+${pixels(PROJECT_ICONS[project.repo], { "#": t.accent }, 3.5, 24, 24)}
+<text x="24" y="92" font-family="${MONO}" font-size="22" font-weight="600" fill="${t.fg}">${esc(project.title)}</text>
 ${lines}
-<line x1="24" x2="${W - 24}" y1="180" y2="180" stroke="${t.border}"/>
-<circle cx="30" cy="200" r="6" fill="${LANGUAGE_COLORS[project.language]}"/>
-<text x="42" y="205" font-family="${SANS}" font-size="13" fill="${t.dim}">${project.language}${stars != null ? `   ★ ${fmt(stars)}` : ""}</text>
-<text x="${W - 24}" y="205" text-anchor="end" font-family="${MONO}" font-size="13" fill="${t.fg}">${esc(project.site)} →</text>`,
+<line x1="24" x2="${W - 24}" y1="196.5" y2="196.5" stroke="${t.border}"/>
+<circle cx="30" cy="217" r="5" fill="${LANGUAGE_COLORS[project.language]}"/>
+<text x="42" y="222" font-family="${SANS}" font-size="13" fill="${t.dim}" xml:space="preserve">${project.language}${stars != null ? `    ★ <tspan font-family="${MONO}">${fmt(stars)}</tspan>` : ""}</text>
+<text x="${W - 24}" y="222" text-anchor="end" font-family="${MONO}" font-size="13" fill="${t.fg}">${esc(project.site)} →</text>`,
+    ["mono", "monoBold"],
   );
 }
 
 function feedButton(t) {
-  // An 8x7 pixel banana.
-  const banana = ["......##", ".....##.", "....###.", "...####.", ".#####..", "#####...", ".###...."];
-  const pixels = banana
-    .flatMap((row, y) =>
-      [...row].map((c, x) => (c === "#" ? `<rect x="${24 + x * 4}" y="${15 + y * 4}" width="4" height="4" fill="${y < 2 ? "#7a5a12" : "#f5c518"}"/>` : "")),
-    )
-    .join("");
   return svg(
     300,
-    58,
-    `<rect x="1" y="1" width="298" height="56" rx="12" fill="${t.panel}" stroke="${t.accent}" stroke-width="2"/>
-<g>${pixels}<animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 0" dur="1.2s" repeatCount="indefinite"/></g>
-<text x="70" y="36" font-family="${MONO}" font-size="17" font-weight="800" letter-spacing="1" fill="${t.fg}">FEED THE MONKEY</text>`,
+    62,
+    `<rect x="1" y="6" width="298" height="55" rx="12" fill="${t.accent}"/>
+<rect x="1" y="1" width="298" height="55" rx="12" fill="${t.panel}" stroke="${t.accent}" stroke-width="2"/>
+<g>${pixels(BANANA, { y: "#f5c518", s: "#7a5a12" }, 4, 26, 14)}<animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 0" dur="1.4s" repeatCount="indefinite"/></g>
+<text x="76" y="36" font-family="${PIXEL}" font-size="16" fill="${t.fg}">FEED THE MONKEY</text>`,
+    ["pixel"],
   );
+}
+
+// Small pixel icons for the README headings, readable on light and dark.
+const HEADING_ICONS = {
+  monkey: {
+    grid: ["...####...", ".########.", "##oooooo##", "#oxoooxoo#", ".oooooooo.", "..oooooo..", "...oxxo...", "....oo...."],
+    palette: { "#": "#9a6a32", o: "#f0c48c", x: "#2b1d0e" },
+  },
+  flask: {
+    grid: ["..####..", "...##...", "...##...", "..#..#..", ".#....#.", "#.gggg.#", "#gggggg#", ".######."],
+    palette: { "#": "#8b949e", g: "#3fb950" },
+  },
+  toolbox: {
+    grid: ["..####..", "..#..#..", "########", "#rrrrrr#", "#rr##rr#", "#rrrrrr#", "########"],
+    palette: { "#": "#8b949e", r: "#e5534b" },
+  },
+  envelope: {
+    grid: ["########", "#p#pp#p#", "#pp##pp#", "#pppppp#", "#pppppp#", "########"],
+    palette: { "#": "#8b949e", p: "#e8dcc0" },
+  },
+  banana: { grid: BANANA, palette: { y: "#f5c518", s: "#7a5a12" } },
+};
+
+function headingIcon({ grid, palette }) {
+  const cols = Math.max(...grid.map((r) => r.length));
+  const size = 10;
+  const cell = size / cols;
+  const y0 = (size - grid.length * cell) / 2;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="20" height="20" shape-rendering="crispEdges">${pixels(grid, palette, cell, 0, y0)}</svg>\n`;
 }
 
 // ---------- README ----------
 
 const picture = (name, alt, attrs = "") =>
   `<picture><source media="(prefers-color-scheme: dark)" srcset="assets/${name}-dark.svg"><img src="assets/${name}-light.svg" alt="${alt}" ${attrs}></picture>`;
+const icon = (name) => `<img src="assets/icon-${name}.svg" width="20" height="20" alt="">`;
 
 function readme(state) {
   const feedUrl = `https://github.com/${REPO}/issues/new?title=${encodeURIComponent("🍌 Feed the monkey")}&body=${encodeURIComponent("Here's a banana. Get typing. 🐒\n\n(Just hit **Create**. The monkey eats it, types a million keys and replies with what it wrote.)")}`;
@@ -452,7 +530,7 @@ function readme(state) {
   This profile is one of them. It's running an experiment right now.
 </p>
 
-### 🐒 The experiment
+### ${icon("monkey")} The experiment
 
 Give a monkey a typewriter and infinite time, and it will eventually type the complete works of Shakespeare. That's the [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem). I'm testing it.
 
@@ -465,23 +543,23 @@ Every day a GitHub Action gives my monkey **${fmt(DAILY_KEYSTROKES)} random keys
   <sub>Each banana buys ${fmt(BANANA_KEYSTROKES)} extra keystrokes right away. The monkey replies with what it typed, and you join the wall below.</sub>
 </p>
 
-<p align="center"><b>🍌 Banana donors</b><br/><br/>${donors}</p>
+<p align="center">${icon("banana")} <b>Banana donors</b><br/><br/>${donors}</p>
 
-### 🧪 Things the monkey typed that actually work
+### ${icon("flask")} Things the monkey typed that actually work
 
 <p align="center">
 ${cards}
 </p>
 
-### 🧰 Tools in the monkey's paws
+### ${icon("toolbox")} Tools in the monkey's paws
 
 <p><img src="https://skillicons.dev/icons?i=ts,react,nextjs,nodejs,tailwind,astro,rust,tauri,swift,postgres&theme=dark" alt="TypeScript, React, Next.js, Node.js, Tailwind, Astro, Rust, Tauri, Swift, Postgres"/></p>
 
-### 📫 Say hi
+### ${icon("envelope")} Say hi
 
 Questions about one of my projects? Open an issue on the repo. For anything else, email [marcel.losso@gmail.com](mailto:marcel.losso@gmail.com).
 
-<sub>Last run ${state.lastRunAt.slice(0, 16).replace("T", " ")} UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · <a href="scripts/monkey.mjs">how it works</a></sub>
+<sub>Last run ${state.lastRunAt.slice(0, 16).replace("T", " ")} UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · Fonts: Silkscreen, IBM Plex Mono, IM Fell English (OFL) · <a href="scripts/monkey.mjs">how it works</a></sub>
 `;
 }
 
@@ -492,6 +570,7 @@ function render(state) {
     writeFileSync(`${root}assets/feed-${name}.svg`, feedButton(t));
     for (const p of PROJECTS) writeFileSync(`${root}assets/card-${p.repo}-${name}.svg`, card(p, state, t));
   }
+  for (const [name, i] of Object.entries(HEADING_ICONS)) writeFileSync(`${root}assets/icon-${name}.svg`, headingIcon(i));
   writeFileSync(`${root}README.md`, readme(state));
 }
 

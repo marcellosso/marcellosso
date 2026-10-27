@@ -7,7 +7,7 @@
   This profile is one of them. It's running an experiment right now.
 </p>
 
-### 🐒 The experiment
+### <img src="assets/icon-monkey.svg" width="20" height="20" alt=""> The experiment
 
 Give a monkey a typewriter and infinite time, and it will eventually type the complete works of Shakespeare. That's the [infinite monkey theorem](https://en.wikipedia.org/wiki/Infinite_monkey_theorem). I'm testing it.
 
@@ -20,9 +20,9 @@ Every day a GitHub Action gives my monkey **10,000,000 random keystrokes** and c
   <sub>Each banana buys 1,000,000 extra keystrokes right away. The monkey replies with what it typed, and you join the wall below.</sub>
 </p>
 
-<p align="center"><b>🍌 Banana donors</b><br/><br/><a href="https://github.com/marcellosso" title="@marcellosso: 1 banana"><img src="https://github.com/marcellosso.png?size=80" width="40" height="40" alt="@marcellosso"></a></p>
+<p align="center"><img src="assets/icon-banana.svg" width="20" height="20" alt=""> <b>Banana donors</b><br/><br/><a href="https://github.com/marcellosso" title="@marcellosso: 1 banana"><img src="https://github.com/marcellosso.png?size=80" width="40" height="40" alt="@marcellosso"></a></p>
 
-### 🧪 Things the monkey typed that actually work
+### <img src="assets/icon-flask.svg" width="20" height="20" alt=""> Things the monkey typed that actually work
 
 <p align="center">
 <a href="https://www.penciled.org"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-penciled-dark.svg"><img src="assets/card-penciled-light.svg" alt="penciled.js: Persistent text highlights and notes on any web page. 15 kB, built on the CSS Custom Highlight API." width="32%"></picture></a>
@@ -30,12 +30,12 @@ Every day a GitHub Action gives my monkey **10,000,000 random keystrokes** and c
 <a href="https://www.npmjs.com/package/better-auth-localization"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-better-auth-localization-dark.svg"><img src="assets/card-better-auth-localization-light.svg" alt="better-auth-localization: A Better Auth plugin that translates error messages automatically, so your users see them in their language." width="32%"></picture></a>
 </p>
 
-### 🧰 Tools in the monkey's paws
+### <img src="assets/icon-toolbox.svg" width="20" height="20" alt=""> Tools in the monkey's paws
 
 <p><img src="https://skillicons.dev/icons?i=ts,react,nextjs,nodejs,tailwind,astro,rust,tauri,swift,postgres&theme=dark" alt="TypeScript, React, Next.js, Node.js, Tailwind, Astro, Rust, Tauri, Swift, Postgres"/></p>
 
-### 📫 Say hi
+### <img src="assets/icon-envelope.svg" width="20" height="20" alt=""> Say hi
 
 Questions about one of my projects? Open an issue on the repo. For anything else, email [marcel.losso@gmail.com](mailto:marcel.losso@gmail.com).
 
-<sub>Last run 2026-10-27 00:38 UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · <a href="scripts/monkey.mjs">how it works</a></sub>
+<sub>Last run 2026-10-27 00:38 UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · Fonts: Silkscreen, IBM Plex Mono, IM Fell English (OFL) · <a href="scripts/monkey.mjs">how it works</a></sub>
