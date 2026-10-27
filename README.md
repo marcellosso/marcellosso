@@ -13,7 +13,7 @@ Give a monkey a typewriter and infinite time, and it will eventually type the co
 
 Every day a GitHub Action gives my monkey **10,000,000 random keystrokes** and checks whether any of them landed on *Hamlet*. Here's how it's going:
 
-<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg"><img src="assets/stats-light.svg" alt="Day 1: 10,000,000 keystrokes, longest Hamlet match so far: "shall ne"" ></picture></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg"><img src="assets/stats-light.svg" alt="Day 1: 20,000,000 keystrokes, longest Hamlet match so far: "o the bla"" ></picture></p>
 
 <p align="center">
   <a href="https://github.com/marcellosso/marcellosso/issues/new?title=%F0%9F%8D%8C%20Feed%20the%20monkey&body=Here's%20a%20banana.%20Get%20typing.%20%F0%9F%90%92%0A%0A(Just%20hit%20**Create**.%20The%20monkey%20eats%20it%2C%20types%20a%20million%20keys%20and%20replies%20with%20what%20it%20wrote.)"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/feed-dark.svg"><img src="assets/feed-light.svg" alt="Feed the monkey a banana" width="300"></picture></a><br/>
@@ -38,4 +38,4 @@ Every day a GitHub Action gives my monkey **10,000,000 random keystrokes** and c
 
 Questions about one of my projects? Open an issue on the repo. For anything else, email [marcel.losso@gmail.com](mailto:marcel.losso@gmail.com).
 
-<sub>Last run 2026-10-27 00:28 UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · <a href="scripts/monkey.mjs">how it works</a></sub>
+<sub>Last run 2026-10-27 00:29 UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · <a href="scripts/monkey.mjs">how it works</a></sub>
