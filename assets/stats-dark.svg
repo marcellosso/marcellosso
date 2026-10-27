@@ -4,10 +4,10 @@
 <text x="22" y="84" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="30" font-weight="800" fill="#e6edf3">1</text>
 <rect x="304.5" y="0.5" width="287" height="111" rx="14" fill="#161b22" stroke="#30363d"/>
 <text x="326" y="34" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="1.5" fill="#7d8590">KEYSTROKES</text>
-<text x="326" y="84" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="30" font-weight="800" fill="#e6edf3">20,000,000</text>
+<text x="326" y="84" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="30" font-weight="800" fill="#e6edf3">21,000,000</text>
 <rect x="608.5" y="0.5" width="287" height="111" rx="14" fill="#161b22" stroke="#30363d"/>
 <text x="630" y="34" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="1.5" fill="#7d8590">BANANAS EATEN</text>
-<text x="630" y="84" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="30" font-weight="800" fill="#e6edf3">0</text>
+<text x="630" y="84" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="30" font-weight="800" fill="#e6edf3">1</text>
 <rect x="912.5" y="0.5" width="287" height="111" rx="14" fill="#161b22" stroke="#30363d"/>
 <text x="934" y="34" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="1.5" fill="#7d8590">HAMLET ETA</text>
 <text x="934" y="84" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="30" font-weight="800" fill="#e6edf3">10<tspan font-size="17" dy="-14">237,421</tspan><tspan font-size="14" font-weight="400" fill="#7d8590" dy="14"> years</tspan></text>

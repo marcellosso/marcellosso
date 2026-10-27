@@ -1,20 +1,27 @@
 {
   "startedOn": "2026-10-27",
-  "keystrokes": 20000000,
-  "runs": 2,
-  "bananas": 0,
+  "keystrokes": 21000000,
+  "runs": 3,
+  "bananas": 1,
   "best": {
     "match": "o the bla",
     "day": 1
   },
   "latest": {
-    "match": "o the bla",
-    "snippet": "cz wnzgtago the blanc jvebmqqe",
-    "matchStart": 10,
-    "keystrokes": 10000000
+    "match": " o i di",
+    "snippet": "lagvmwd xcd o i dijhdqzukkihsr",
+    "matchStart": 11,
+    "keystrokes": 1000000,
+    "fedBy": "marcellosso"
   },
-  "lastRunAt": "2026-10-27T00:29:43.386Z",
-  "donors": [],
+  "lastRunAt": "2026-10-27T00:38:20.561Z",
+  "donors": [
+    {
+      "login": "marcellosso",
+      "bananas": 1,
+      "lastFed": "2026-10-27"
+    }
+  ],
   "stars": {
     "penciled": 11,
     "better-auth-localization": 185,
