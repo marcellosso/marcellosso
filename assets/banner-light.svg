@@ -8,8 +8,7 @@
 <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">
   <circle cx="840" cy="28" r="5" fill="#ff5f57"/><circle cx="856" cy="28" r="5" fill="#febc2e"/><circle cx="872" cy="28" r="5" fill="#28c840"/>
   <text x="1178" y="32" text-anchor="end" font-size="12" fill="#656d76">monkey.typewriter · day 1</text>
-  <text x="835" y="84" font-size="23" font-weight="800" fill="#1f2328">I AM A CODING MACHINE</text>
-  <text x="835" y="108" font-size="13" fill="#656d76">(this is a joke)</text>
+  <text x="835" y="94" font-size="23" font-weight="800" fill="#1f2328">I AM A CODING MACHINE</text>
   <text x="835" y="148" font-size="13" fill="#b98900">$ monkey --type --keys=10M</text>
   <g font-size="19"><text x="835.0" y="186" fill="#1f2328" font-weight="400" opacity="0">c<animate attributeName="opacity" values="0;1;1" keyTimes="0;0.0000;1" dur="8.2s" calcMode="discrete" repeatCount="indefinite"/></text>
 <text x="846.6" y="186" fill="#1f2328" font-weight="400" opacity="0">z<animate attributeName="opacity" values="0;1;1" keyTimes="0;0.0171;1" dur="8.2s" calcMode="discrete" repeatCount="indefinite"/></text>
