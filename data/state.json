@@ -1,20 +1,26 @@
 {
   "startedOn": "2026-10-27",
-  "keystrokes": 43000000,
-  "runs": 7,
-  "bananas": 3,
+  "keystrokes": 44000000,
+  "runs": 8,
+  "bananas": 4,
   "best": {
     "match": "o the bla",
     "day": 1
   },
   "latest": {
-    "match": "ortens n",
-    "snippet": "pfr rz mslzortens n mjwfpgafam",
+    "match": "en my f",
+    "snippet": "zttsfxmsdvwen my frwztgtwetlhu",
     "matchStart": 11,
-    "keystrokes": 10000000
+    "keystrokes": 1000000,
+    "fedBy": "GabrielRomanoo"
   },
-  "lastRunAt": "2026-10-29T04:53:41.735Z",
+  "lastRunAt": "2026-10-30T02:08:47.892Z",
   "donors": [
+    {
+      "login": "GabrielRomanoo",
+      "bananas": 1,
+      "lastFed": "2026-10-30"
+    },
     {
       "login": "RennanSJ",
       "bananas": 1,

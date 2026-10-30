@@ -13,14 +13,14 @@ Give a monkey a typewriter and infinite time, and it will eventually type the co
 
 Every day a GitHub Action gives my monkey **10,000,000 random keystrokes** and checks whether any of them landed on *Hamlet*. Here's how it's going:
 
-<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg"><img src="assets/stats-light.svg" alt="Day 3: 43,000,000 keystrokes, longest Hamlet match so far: "o the bla"" ></picture></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg"><img src="assets/stats-light.svg" alt="Day 4: 44,000,000 keystrokes, longest Hamlet match so far: "o the bla"" ></picture></p>
 
 <p align="center">
   <a href="https://github.com/marcellosso/marcellosso/issues/new?title=%F0%9F%8D%8C%20Feed%20the%20monkey&body=Here's%20a%20banana.%20Get%20typing.%20%F0%9F%90%92%0A%0A(Just%20hit%20**Create**.%20The%20monkey%20eats%20it%2C%20types%20a%20million%20keys%20and%20replies%20with%20what%20it%20wrote.)"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/feed-dark.svg"><img src="assets/feed-light.svg" alt="Feed the monkey a banana" width="300"></picture></a><br/>
   <sub>Each banana buys 1,000,000 extra keystrokes right away. The monkey replies with what it typed, and you join the wall below.</sub>
 </p>
 
-<p align="center"><img src="assets/icon-banana.svg" width="20" height="20" alt=""> <b>Banana donors</b><br/><br/><a href="https://github.com/RennanSJ" title="@RennanSJ: 1 banana"><img src="https://github.com/RennanSJ.png?size=80" width="40" height="40" alt="@RennanSJ"></a> <a href="https://github.com/matheusrteixeira-dev" title="@matheusrteixeira-dev: 1 banana"><img src="https://github.com/matheusrteixeira-dev.png?size=80" width="40" height="40" alt="@matheusrteixeira-dev"></a> <a href="https://github.com/marcellosso" title="@marcellosso: 1 banana"><img src="https://github.com/marcellosso.png?size=80" width="40" height="40" alt="@marcellosso"></a></p>
+<p align="center"><img src="assets/icon-banana.svg" width="20" height="20" alt=""> <b>Banana donors</b><br/><br/><a href="https://github.com/GabrielRomanoo" title="@GabrielRomanoo: 1 banana"><img src="https://github.com/GabrielRomanoo.png?size=80" width="40" height="40" alt="@GabrielRomanoo"></a> <a href="https://github.com/RennanSJ" title="@RennanSJ: 1 banana"><img src="https://github.com/RennanSJ.png?size=80" width="40" height="40" alt="@RennanSJ"></a> <a href="https://github.com/matheusrteixeira-dev" title="@matheusrteixeira-dev: 1 banana"><img src="https://github.com/matheusrteixeira-dev.png?size=80" width="40" height="40" alt="@matheusrteixeira-dev"></a> <a href="https://github.com/marcellosso" title="@marcellosso: 1 banana"><img src="https://github.com/marcellosso.png?size=80" width="40" height="40" alt="@marcellosso"></a></p>
 
 ### <img src="assets/icon-flask.svg" width="20" height="20" alt=""> Things the monkey typed that actually work
 
@@ -38,4 +38,4 @@ Every day a GitHub Action gives my monkey **10,000,000 random keystrokes** and c
 
 Questions about one of my projects? Open an issue on the repo. For anything else, email [marcel.losso@gmail.com](mailto:marcel.losso@gmail.com).
 
-<sub>Last run 2026-10-29 04:53 UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · Fonts: Silkscreen, IBM Plex Mono, IM Fell English (OFL) · <a href="scripts/monkey.mjs">how it works</a></sub>
+<sub>Last run 2026-10-30 02:08 UTC · Hamlet text from <a href="https://www.gutenberg.org/ebooks/1524">Project Gutenberg</a> · Fonts: Silkscreen, IBM Plex Mono, IM Fell English (OFL) · <a href="scripts/monkey.mjs">how it works</a></sub>
